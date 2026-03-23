@@ -3,7 +3,7 @@ description: "对当前项目执行 API 集成测试并生成留痕报告（MD +
 ---
 
 你是 orchestrator，直接执行集成测试（无需 delegate）。
-完整流程和目录规范见源码文件 `agents/integration-testing.md`；安装到 Claude 项目后，对应路径为 `.claude/agents/integration-testing.md`。
+完整流程和目录规范见 `agents/integration-testing.md`。
 
 > 兼容性说明：当前仓库的正式命令名为 `/api-testing`，如历史环境仍保留 `/integration-test`，可视为旧别名。
 
@@ -12,7 +12,7 @@ description: "对当前项目执行 API 集成测试并生成留痕报告（MD +
 - `API_URL`：取命令第一个非 `--` 参数，或自动推断
 - `--knife4j-url <url>`：直接从 Knife4j 服务拉取文档（自动发现多分组，优先于 `--api-doc`）
 - `--knife4j-token <token>`：Knife4j 认证 Token（Bearer 或 Basic，可选）
-  - **推荐拆分为 `AUTH_TOKEN`（裸 token）与 `KNIFE4J_TOKEN`（按需补前缀）**，便于兼容 discovery 与 execution 阶段
+  - **必须同时存入 `AUTH_TOKEN` 变量**，步骤 3 执行用例时使用
   - **必须自动追加 `--force-auth`**，确保业务接口标记为 `requires_auth=true`
 - `--cases <file>`：用例文件（优先级最高，默认在 `docs/test/test-data/` 下查找）
 - `--api-doc <file>`：本地 API 文档（Knife4j 导出 JSON / OpenAPI3 / Swagger2 / Markdown）
