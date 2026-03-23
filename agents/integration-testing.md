@@ -54,15 +54,17 @@ docs/test/
 - `--model sonnet`（默认）：端点数 > 20、文档质量差、需要推断请求体结构时使用。
 
 **Token 处理（关键）**：
-- 若传入 `--knife4j-token "Bearer eyJ..."`，提取时**必须去掉 `Bearer ` 前缀**，只存裸 token。
-- `skills/api-testing/scripts/run_test.py` 内部会自动拼 `Authorization: Bearer <token>`；若传入含 `Bearer` 的完整字符串会变成 `Bearer Bearer xxx`。
+- `skills/api-testing/scripts/run_test.py` 同时兼容两种 token 形式：裸 token（`eyJ...`）和带前缀的 `Bearer eyJ...`。
+- 为了避免在 `discover_cases.py`、`run_chain.py`、shell 环境变量之间来回转换时混乱，**推荐统一存裸 token**，需要访问 Knife4j 时再按需补 `Bearer ` 前缀。
 
 ```bash
 RAW_TOKEN="Bearer eyJhbGci..."
 AUTH_TOKEN="${RAW_TOKEN#Bearer }"
+KNIFE4J_TOKEN="Bearer ${AUTH_TOKEN}"
 ```
 
-- `AUTH_TOKEN` 用途：步骤 2 用于拉取 Knife4j 文档（传完整 `Bearer xxx`）；步骤 3 用于执行用例（传裸 token）。
+- `AUTH_TOKEN` 用途：步骤 3 用于执行用例（推荐传裸 token）。
+- `KNIFE4J_TOKEN` 用途：步骤 2 拉取 Knife4j 文档时使用；若你直接传裸 token，`discover_cases.py` 也会自动补 `Bearer `。
 - 若接口文档未声明 security scheme，必须同时传 `--force-auth` 给 `discover_cases.py`。
 
 **套件超时控制**：`SUITE_DEADLINE` 必须在每批 Python 脚本**内部**计算（`int(time.time()) + 超时秒数`），不能依赖 bash heredoc 外层变量展开。
@@ -86,13 +88,14 @@ API: <url> | TS: <timestamp> | MODEL: <model> | TOKEN: <裸token前20字符>... 
 
 前置检查：
 1. `TIMESTAMP` 必须是本次新生成的值。
-2. `AUTH_TOKEN` 必须是**裸 token**，不含 `Bearer ` 前缀。
+2. `AUTH_TOKEN` 推荐保存为**裸 token**，便于在 `run_chain.py` 中复用；若传入 `Bearer xxx`，`run_test.py` 也能兼容。
 3. 每次重跑都必须重新执行 `init`，避免复用旧 evidence。
 
 ```bash
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 RAW_TOKEN="Bearer eyJhbGci..."
 AUTH_TOKEN="${RAW_TOKEN#Bearer }"
+KNIFE4J_TOKEN="Bearer ${AUTH_TOKEN}"
 
 export EVIDENCE_DIR="docs/test/test-reports/${TIMESTAMP}/api-testing/evidence"
 export REPORT_BASE="docs/test/test-reports/${TIMESTAMP}/api-testing"
@@ -116,7 +119,7 @@ mkdir -p docs/test/test-cases
 CASES_FILE="docs/test/test-cases/${TIMESTAMP}-cases.json"
 DISCOVER_LOG="docs/test/test-cases/${TIMESTAMP}-discover.log"
 
-python3 skills/api-testing/scripts/discover_cases.py .   --knife4j-url http://localhost:8080   --knife4j-token "${AUTH_TOKEN}"   --force-auth   --generate-all > "${CASES_FILE}" 2>"${DISCOVER_LOG}"
+python3 skills/api-testing/scripts/discover_cases.py .   --knife4j-url http://localhost:8080   --knife4j-token "${KNIFE4J_TOKEN}"   --force-auth   --generate-all > "${CASES_FILE}" 2>"${DISCOVER_LOG}"
 
 python3 -c "
 import json, sys
@@ -158,7 +161,7 @@ done
 2. 每次 bash 调用前重新导出 `EVIDENCE_DIR` 和 `AUTH_TOKEN`。
 3. 用例数 > 100 时分批执行，每批 80-100 条。
 4. `cover` 命令同样使用模板路径。
-5. `AUTH_TOKEN` 必须是裸 token。
+5. `AUTH_TOKEN` 推荐使用裸 token，便于与 `run_chain.py`、环境变量和 Knife4j 访问逻辑配合；若传入 `Bearer xxx`，`run_test.py` 仍可兼容。
 6. `SUITE_DEADLINE` 在 Python 内部计算。
 
 #### 方式 A：带依赖链执行（推荐）
