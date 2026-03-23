@@ -141,11 +141,11 @@ test -f "$PROJECT_ROOT/.claude/commands/api-testing.md"
 |------|--------------|-------------------|
 | 查看命令入口 | `commands/api-testing.md` | `.claude/commands/api-testing.md` |
 | 查看 agent 规则 | `agents/integration-testing.md` | `.claude/agents/integration-testing.md` |
-| 发现用例 | `python3 skills/api-testing/scripts/discover_cases.py . --api-doc docs/test/test-data/swagger.json --generate-all` | `python3 .claude/skills/api-testing/scripts/discover_cases.py . --api-doc docs/test/test-data/swagger.json --generate-all` |
-| 依赖链执行 | `python3 skills/api-testing/scripts/run_chain.py ...` | `python3 .claude/skills/api-testing/scripts/run_chain.py ...` |
-| 生成报告 | `bash skills/api-testing/scripts/record.sh all <BASE_DIR> <TIMESTAMP> <API_URL>` | `bash .claude/skills/api-testing/scripts/record.sh all <BASE_DIR> <TIMESTAMP> <API_URL>` |
+| 发现用例 | `skills/api-testing/scripts/discover_cases.py`（源码维护位置） | `python3 .claude/skills/api-testing/scripts/discover_cases.py . --api-doc docs/test/test-data/swagger.json --generate-all` |
+| 依赖链执行 | `skills/api-testing/scripts/run_chain.py`（源码维护位置） | `python3 .claude/skills/api-testing/scripts/run_chain.py "$CASES_FILE" "$EVIDENCE_DIR" "$API_URL" "$AUTH_TOKEN" --request-timeout 10 --suite-timeout 600` |
+| 生成报告 | `skills/api-testing/scripts/record.sh`（源码维护位置） | `bash .claude/skills/api-testing/scripts/record.sh all "$BASE_DIR" "$TIMESTAMP" "$API_URL"` |
 
-> 说明：`run_chain.py` 的内部子进程调用和 `record.sh cover` 使用的是 `.claude/skills/api-testing/scripts/...` 运行时路径，因此**真正执行依赖链时，应以 Claude 项目中的 `.claude` 安装路径为准**。
+> 说明：源码仓库中的 `skills/api-testing/scripts/...` 适合查看与维护；真正执行 `run_chain.py`、`run_test.py`、`record.sh` 时，应以 Claude 项目中的 `.claude/skills/api-testing/scripts/...` 运行时路径为准。
 
 ---
 

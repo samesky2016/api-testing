@@ -12,7 +12,7 @@ description: "对当前项目执行 API 集成测试并生成留痕报告（MD +
 - `API_URL`：取命令第一个非 `--` 参数，或自动推断
 - `--knife4j-url <url>`：直接从 Knife4j 服务拉取文档（自动发现多分组，优先于 `--api-doc`）
 - `--knife4j-token <token>`：Knife4j 认证 Token（Bearer 或 Basic，可选）
-  - **必须同时存入 `AUTH_TOKEN` 变量**，步骤 3 执行用例时使用
+  - **推荐拆分为 `AUTH_TOKEN`（裸 token）与 `KNIFE4J_TOKEN`（按需补前缀）**，便于兼容 discovery 与 execution 阶段
   - **必须自动追加 `--force-auth`**，确保业务接口标记为 `requires_auth=true`
 - `--cases <file>`：用例文件（优先级最高，默认在 `docs/test/test-data/` 下查找）
 - `--api-doc <file>`：本地 API 文档（Knife4j 导出 JSON / OpenAPI3 / Swagger2 / Markdown）

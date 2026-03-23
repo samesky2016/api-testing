@@ -99,7 +99,7 @@ KNIFE4J_TOKEN="Bearer ${AUTH_TOKEN}"
 
 export EVIDENCE_DIR="docs/test/test-reports/${TIMESTAMP}/api-testing/evidence"
 export REPORT_BASE="docs/test/test-reports/${TIMESTAMP}/api-testing"
-$(which bash || echo /bin/bash) skills/api-testing/scripts/record.sh init
+$(which bash || echo /bin/bash) .claude/skills/api-testing/scripts/record.sh init
 ```
 
 ### 步骤 2：发现/生成测试用例（1 次工具调用）
@@ -119,7 +119,7 @@ mkdir -p docs/test/test-cases
 CASES_FILE="docs/test/test-cases/${TIMESTAMP}-cases.json"
 DISCOVER_LOG="docs/test/test-cases/${TIMESTAMP}-discover.log"
 
-python3 skills/api-testing/scripts/discover_cases.py .   --knife4j-url http://localhost:8080   --knife4j-token "${KNIFE4J_TOKEN}"   --force-auth   --generate-all > "${CASES_FILE}" 2>"${DISCOVER_LOG}"
+python3 .claude/skills/api-testing/scripts/discover_cases.py .   --knife4j-url http://localhost:8080   --knife4j-token "${KNIFE4J_TOKEN}"   --force-auth   --generate-all > "${CASES_FILE}" 2>"${DISCOVER_LOG}"
 
 python3 -c "
 import json, sys
@@ -137,7 +137,7 @@ except Exception as e:
 
 ```bash
 export EVIDENCE_DIR="docs/test/test-reports/${TIMESTAMP}/api-testing/evidence"
-S="skills/api-testing/scripts/record.sh"
+S=".claude/skills/api-testing/scripts/record.sh"
 
 python3 -c "
 import json
@@ -170,7 +170,7 @@ done
 export EVIDENCE_DIR="docs/test/test-reports/${TIMESTAMP}/api-testing/evidence"
 export AUTH_TOKEN="${AUTH_TOKEN}"
 
-python3 skills/api-testing/scripts/run_chain.py   "${CASES_FILE}" "${EVIDENCE_DIR}" "${API_URL}" "${AUTH_TOKEN}"   --request-timeout 10   --suite-timeout 600
+python3 .claude/skills/api-testing/scripts/run_chain.py   "${CASES_FILE}" "${EVIDENCE_DIR}" "${API_URL}" "${AUTH_TOKEN}"   --request-timeout 10   --suite-timeout 600
 ```
 
 说明：
@@ -183,7 +183,7 @@ python3 skills/api-testing/scripts/run_chain.py   "${CASES_FILE}" "${EVIDENCE_DI
 export EVIDENCE_DIR="docs/test/test-reports/${TIMESTAMP}/api-testing/evidence"
 export AUTH_TOKEN="${AUTH_TOKEN}"
 
-python3 skills/api-testing/scripts/run_test.py   "$EVIDENCE_DIR" 1 TC-001 P1 GET "${API_URL}/health" 200 'null' '[]' '-'
+python3 .claude/skills/api-testing/scripts/run_test.py   "$EVIDENCE_DIR" 1 TC-001 P1 GET "${API_URL}/health" 200 'null' '[]' '-'
 ```
 
 ### 步骤 4：生成报告
@@ -192,7 +192,7 @@ python3 skills/api-testing/scripts/run_test.py   "$EVIDENCE_DIR" 1 TC-001 P1 GET
 export EVIDENCE_DIR="docs/test/test-reports/${TIMESTAMP}/api-testing/evidence"
 BASE_DIR="docs/test/test-reports/${TIMESTAMP}/api-testing"
 
-$(which bash || echo /bin/bash) skills/api-testing/scripts/record.sh all   "$BASE_DIR" "$TIMESTAMP" "$API_URL"
+$(which bash || echo /bin/bash) .claude/skills/api-testing/scripts/record.sh all   "$BASE_DIR" "$TIMESTAMP" "$API_URL"
 ```
 
 要求：
