@@ -17,7 +17,7 @@ version: "0.9.0"
 
 # Test Skills — 参考文档索引
 
-集成测试技能内部参考文档，供 agent 按需按场景加载。路径相对项目根目录。
+集成测试技能内部参考文档，供 agent 按需按场景加载。源码仓库中使用 `skills/api-testing/...`；安装到 Claude 项目后，对应运行时路径为 `.claude/skills/api-testing/...`。
 
 ## 参考文档路由
 
